@@ -1,6 +1,11 @@
 #include<iostream>
 #include<fstream>
+#include<vector>
+
 using namespace std;
+
+vector<int*> output;
+
 struct node
 {
 	int maxSpeed;
@@ -12,39 +17,59 @@ struct cusnode
 	int linkToNod;
 	int need;
 };
-int min(int *p ,int n)
+
+int DFS(int a,int b)
 {
-	int temp=9999;
-	int tmpidex=0;
-	for (int i = 0; i < n; ++i)
+	
+}
+int find_serveridx(int *temp ,int *serveridx,int n)
+{
+	int t=9999;
+	int cnt = 0;
+	for(int j = 0;j<n;++j)
 	{
-		if (p[i] < temp)
+		for(int i = 0;i<n;++i)
 		{
-			temp = p[i];
-			tmpidex = i;
+			if(temp[i]<t)
+			{
+				t=temp[i];
+				cnt=i;
+				temp[i]=999999;
+			}
+		}
+		serveridx[j]=cnt;
+	}
+	
+}
+
+void programming(int *serveridx,int *cus,int n)
+{
+	for(int i=0;i<n;++i)
+	{
+		for(int j=0;j<=i;+j)
+		{
+			int *temp;
+			temp=new int[j+1];
+			temp[j]=DFS(cus[i],serveridx[j]);
+			
+
+			delete temp;
 		}
 	}
-	return tmpidex;
 }
-int findpath(int **P,int i,int j)
-{
-	if (i == j)
-		return -1;
-	j = P[i][j];
-	return j;
-}
+
 int main()
 {
 	int initial[3] = { 0 };
-	int costOfServer = 0;//ÊÓÆµÄÚÈÝ·þÎñÆ÷³É±¾
-	node **nod;//ÍøÂç½Úµã
-	cusnode *cusnod;//Ïû·Ñ½Úµã
+	int costOfServer = 0;//ï¿½ï¿½Æµï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½
+	node **nod;//ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
+	cusnode *cusnod;//ï¿½ï¿½ï¿½Ñ½Úµï¿½
 	int **D;
 	int **P;
 	ifstream Case("case0.txt");
 
 	for (int i = 0; i < 3; ++i)
-		Case >> initial[i];//initial[0]ÎªÍøÂç½ÚµãÊýÁ¿£¬initial[1]ÎªÁ´Â·Êý£¬initial[2]ÎªÏû·Ñ½ÚµãÊý
+		Case >> initial[i];//initial[0]Îªï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½initial[1]Îªï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½initial[2]Îªï¿½ï¿½ï¿½Ñ½Úµï¿½ï¿½ï¿½
 	Case >> costOfServer;
 
 	nod = new node*[initial[0]];
@@ -97,29 +122,13 @@ int main()
 		cusnod[i].need = temp[2];
 	}
 	Case.close();
-	int *first;
-	first = new int[initial[2]];
+	int *cus;
+	cus = new int[initial[2]];
 	
 	
 	for (int i = 0; i < initial[2]; ++i)
-		first[i] = cusnod[i].linkToNod;
-	//for (int i = 0; i < initial[2]; ++i)
-	//	cout << first[i] << endl;
-	//cout << endl;
-	//
-	//	for (int i = 0; i < initial[2]; ++i)
-	//	{
-	//		for (int j = 0; j < initial[0]; ++j)
-	//		{
-	//			int temp = 10000;
-	//			if (nod[first[i]][j].fee < temp)
-	//			{
-	//				first[i] = j;
-	//				temp = nod[first[i]][j].fee;
-	//			}
-	//		}
-	//	}
-	//
+		cus[i] = cusnod[i].linkToNod;
+
 	for (int i = 0; i < initial[0]; ++i)
 	{
 		for (int j = 0; j < initial[0]; ++j)
@@ -143,46 +152,23 @@ int main()
 			}
 		}
 	}
-		int sum=0;
-		int *temp;
-		temp = new int[initial[2]];
-		for (int i = 0; i < initial[0]; ++i)
-		{
-			for (int j = 0;j < initial[2]; ++j)
-			{
-				sum += D[first[j]][i];
-			}
-			temp[i] = sum;
-			sum = 0;
-			//cout <<i <<"\t"<<temp[i] << endl;
-		}
-	int serveridx;
-	serveridx = min(temp, initial[2]);
-	cout << serveridx << endl;
-
-	/*int **path;
-	path = new int*[initial[2]];
-	for (int i = 0; i < initial[2]; ++i) {
-		path[i] = new int[100];
-	}
-	for (int i = 0; i < initial[2]; ++i)
+	int sum=0;
+	int *temp;
+	temp = new int[initial[2]];
+	for (int i = 0; i < initial[0]; ++i)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0;j < initial[2]; ++j)
 		{
-			path[i][j] = -1;
+			sum += D[cus[j]][i];
 		}
+		temp[i] = sum;
+		sum = 0;
+		//cout <<i <<"\t"<<temp[i] << endl;
 	}
-	for (int i = 0; i < initial[2]; ++i)
-	{
-		int t = serveridx;
-		path[i][99] = serveridx;
-		for (int j = 0; j < 100; ++j)
-		{	
-			t = findpath(P, first[i], t);
-			if(t>=0)
-			path[i][98 - i] = t;
-		}
-	}*/
+	int *serveridx;
+	serveridx = new int[initial[2]];
+	find_serveridx(temp,serveridx,initial[2]);	
+	
 	
 	system("pause");
 	return 0;
